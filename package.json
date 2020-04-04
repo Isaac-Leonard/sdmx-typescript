@@ -1,6 +1,6 @@
 {
   "name": "sdmx-typescript",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "SDMX Parser in Typescript",
   "author": "James Gardner <jsg@internode.on.net>",
   "license": "MIT",
