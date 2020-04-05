@@ -15,7 +15,8 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -23,7 +24,7 @@ import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
+import * as parser from '../sdmx/parser';
 import moment from "moment";
 export class ABS2 implements interfaces.Queryable, interfaces.RemoteRegistry {
     private agency: string = "ABS";
@@ -71,7 +72,7 @@ export class ABS2 implements interfaces.Queryable, interfaces.RemoteRegistry {
         opts.headers = { "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
             console.log("Got Data Response");
-            var dm = sdmx.SdmxIO.parseData(a);
+            var dm = parser.SdmxParser.parseData(a);
             var payload = new common.PayloadStructureType();
             payload.setStructure(dataflow.getStructure());
             dm.getHeader().setStructures([payload]);
@@ -141,7 +142,7 @@ export class ABS2 implements interfaces.Queryable, interfaces.RemoteRegistry {
         opts.method = "GET";
         opts.headers = {};
         return this.makeRequest(opts).then(function(a) {
-            return sdmx.SdmxIO.parseStructure(a);
+            return parser.SdmxParser.parseStructure(a);
         });
     }
     public retrieve2(urlString: string): Promise<string> {
@@ -164,7 +165,7 @@ export class ABS2 implements interfaces.Queryable, interfaces.RemoteRegistry {
     public findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
         var dst: structure.DataStructure = this.local.findDataStructure(ref);
         if (dst != null) {
-            var promise = new Promise < structure.DataStructure>(function(resolve, reject) {
+            var promise = new Promise<structure.DataStructure>(function(resolve, reject) {
                 resolve(dst);
             }.bind(this));
             return promise;
@@ -259,3 +260,4 @@ export class ABS2 implements interfaces.Queryable, interfaces.RemoteRegistry {
         return s;
     }
 }
+export default {ABS2:ABS2}

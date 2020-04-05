@@ -86,7 +86,7 @@ export class ObservationDimensionType extends commonreferences.NCNameID {
         //      this.code = commonreferences.ObsDimensionsCodeType.fromString(s);
         //  }
     }
-    public toString(): string { return this.code != null ? this.code.toString() : super.toString(); }
+    public toString(): string {return this.code != null ? this.code.toString() : super.toString();}
 }
 export class ActionType {
     /*
@@ -140,7 +140,7 @@ export class ActionType {
         if (!contains) throw new Error(s + " is not a valid ActionType");
         this.target = s;
     }
-    public toString(): string { return this.target; }
+    public toString(): string {return this.target;}
 }
 export class PayloadStructureType {
     private structureID: commonreferences.ID = null;
@@ -155,10 +155,10 @@ export class PayloadStructureType {
     private provisionAgreement: commonreferences.Reference;
     private structureUsage: commonreferences.Reference;
     private structure: commonreferences.Reference;
-    public setStructure(ref:commonreferences.Reference) {
-        this.structure=ref;
+    public setStructure(ref: commonreferences.Reference) {
+        this.structure = ref;
     }
-    public getStructure():commonreferences.Reference { return this.structure; }
+    public getStructure(): commonreferences.Reference {return this.structure;}
 }
 
 export class ObservationalTimePeriodType {
@@ -224,7 +224,7 @@ export class ExternalReferenceAttributeGroup {
     private structureURL: string = null;
 
 
-    constructor() { }
+    constructor() {}
 
     /**
      * @return the serviceURL
@@ -379,9 +379,27 @@ export class DataType {
         this.target = s;
         this.index = DataType.STRING_ENUM.indexOf(s);
     }
-    public toString(): string { return this.target; }
+    public toString(): string {return this.target;}
     public toInt(): number {
         return this.index;
     }
 }
 export class StandardTimePeriodType {}
+
+
+
+export default {
+    ActionType: ActionType,
+    AnnotableType: AnnotableType,
+    Annotation: Annotation,
+    Annotations: Annotations,
+    DataType: DataType,
+    Description: Description,
+    ExternalReferenceAttribeGroup: ExternalReferenceAttributeGroup,
+    Name: Name,
+    ObservationDimensionType: ObservationDimensionType,
+    ObservationalTimePeriodType: ObservationalTimePeriodType,
+    PayloadStructureType: PayloadStructureType,
+    StandardTimePeriodType: StandardTimePeriodType,
+    TextType: TextType
+}

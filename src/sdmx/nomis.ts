@@ -16,7 +16,8 @@
     Copyright (C) 2016 James Gardner
 */
 import moment from "moment";
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -24,7 +25,7 @@ import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
+import * as parser from '../sdmx/parser';
 import * as time from './time';
 export function parseXml(s: string): any {
     var parseXml: DOMParser;
@@ -270,7 +271,7 @@ export class NOMISRESTServiceRegistry implements interfaces.RemoteRegistry, inte
         opts.headers = { "Connection": "close" ,
          "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
-            return sdmx.SdmxIO.parseStructure(a);
+            return parser.SdmxParser.parseStructure(a);
         });
     }
     public retrieveData(dataflow: structure.Dataflow, urlString: string): Promise<message.DataMessage> {
@@ -285,7 +286,7 @@ export class NOMISRESTServiceRegistry implements interfaces.RemoteRegistry, inte
         opts.method = "GET";
         opts.headers = { "Connection": "close","Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
-            var dm = sdmx.SdmxIO.parseData(a);
+            var dm = parser.SdmxParser.parseData(a);
             var payload = new common.PayloadStructureType();
             payload.setStructure(dataflow.getStructure());
             dm.getHeader().setStructures([payload]);
@@ -560,3 +561,4 @@ export class NOMISGeography {
     }
 
 }
+export default {NOMISRestServiceRegistry: NOMISRESTServiceRegistry }

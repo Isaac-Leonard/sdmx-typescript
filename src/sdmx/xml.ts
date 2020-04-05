@@ -89,3 +89,11 @@ export class DateTime {
 export class duration {
     
 }
+
+export default {
+    DateTime:DateTime,
+    RegexXMLString:RegexXMLString,
+    XMLString:XMLString,
+    anyURI:anyURI,
+    duration:duration
+}

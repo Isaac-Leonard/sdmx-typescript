@@ -15,8 +15,10 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
+
 import moment from "moment";
-import { Promise } from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from './interfaces';
 import * as registry from './registry';
 import * as structure from './structure';
@@ -27,6 +29,7 @@ import * as data from './data';
 import * as sdmx from '../sdmx';
 import * as time from './time';
 import * as xml from './xml';
+/*
 export class Widukind implements interfaces.Queryable, interfaces.RemoteRegistry, interfaces.Repository {
     private agency: string = "WIDUKIND";
     //http://stats.oecd.org/restsdmx/sdmx.ashx/GetDataStructure/ALL/OECD
@@ -67,7 +70,7 @@ export class Widukind implements interfaces.Queryable, interfaces.RemoteRegistry
         opts.headers = { "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
             console.log("Got Data Response");
-            var dm = sdmx.SdmxIO.parseData(a);
+            var dm = sdmx.SdmxParser.parseData(a);
             var payload = new common.PayloadStructureType();
             payload.setStructure(dataflow.getStructure());
             dm.getHeader().setStructures([payload]);
@@ -137,7 +140,7 @@ export class Widukind implements interfaces.Queryable, interfaces.RemoteRegistry
         opts.method = "GET";
         opts.headers = { "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
-            return sdmx.SdmxIO.parseStructure(a);
+            return sdmx.SdmxParser.parseStructure(a);
         });
     }
     public retrieve2(urlString: string): Promise<string> {
@@ -209,3 +212,5 @@ export class Widukind implements interfaces.Queryable, interfaces.RemoteRegistry
     }
     save(): any { }
 }
+export default { Widukind:Widukind }
+*/

@@ -16,7 +16,8 @@
     Copyright (C) 2016 James Gardner
 */
 import * as collections from 'typescript-collections';
-import { Promise } from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as structure from '../sdmx/structure';
@@ -157,4 +158,8 @@ export interface DataSet {
     getGroups(): Array<data.Group>;
     groupSize(): number;
     find(key: data.FullKey): data.FlatObs;
+}
+export default {
+     
+    
 }

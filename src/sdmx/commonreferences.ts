@@ -737,3 +737,19 @@ export class ObsDimensionsCodeType {
 export class ProvisionAgreementReference { }
 export class StructureReferenceBase { }
 export class StructureUsageReferenceBase { }
+
+export default{
+    ID:ID,
+    NCNameID:NCNameID,
+    NestedID:NestedID,
+    NestedNCNameID:NestedNCNameID,
+    ObjectTypeCodelistType: ObjectTypeCodelistType,
+    ObsDimensionsCodeType: ObsDimensionsCodeType,
+    PackageTypeCodelistType: PackageTypeCodelistType,
+    ProvisionAgreementReference: ProvisionAgreementReference,
+    Ref:Ref,
+    Reference:Reference,
+    StructureReferenceBase: StructureReferenceBase,
+    StructureUsageReferenceBase: StructureUsageReferenceBase,
+    Version:Version
+}

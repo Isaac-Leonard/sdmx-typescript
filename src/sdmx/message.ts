@@ -15,14 +15,15 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
+//import * as sdmx from '../sdmx';
 import * as xml from '../sdmx/xml';
 import * as collections from 'typescript-collections';
 export class DataMessage {
@@ -255,4 +256,16 @@ export class Header {
     setSource(s: Array<common.Name>) {
         this.source = s;
     }
+}
+
+
+export default {
+    Contact:Contact,
+    DataMessage:DataMessage,
+    DataQuery:DataQuery,
+    Header:Header,
+    HeaderTimeType:HeaderTimeType,
+    PartyType:PartyType,
+    Sender:Sender,
+    StructureType:StructureType
 }

@@ -15,7 +15,8 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as collections from 'typescript-collections';
 import moment from "moment";
 import * as interfaces from '../sdmx/interfaces';
@@ -24,9 +25,9 @@ import * as structure from '../sdmx/structure';
 import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
-import * as sdmx from '../sdmx';
 import * as timepack from '../sdmx/time';
-import * as _ from 'lodash';
+import * as _ from 'underscore';
+import * as Language from '../sdmx/language';
 export class Query {
     private flow: structure.Dataflow = null;
     private structRef: commonreferences.Reference = null;
@@ -1005,7 +1006,7 @@ export class ValueTypeResolver {
         }
         if (dim == null) {
             var itm: structure.CodeType = new structure.CodeType();
-            var name: common.Name = new common.Name(sdmx.SdmxIO.getLocale(), value);
+            var name: common.Name = new common.Name(Language.Language.getLanguage(), value);
             var names: Array<common.Name> = [name];
             itm.setNames(names);
             return itm;
@@ -1075,14 +1076,14 @@ export class ValueTypeResolver {
             }
             else {
                 var itm: structure.CodeType = new structure.CodeType();
-                var name: common.Name = new common.Name(sdmx.SdmxIO.getLocale(), value);
+                var name: common.Name = new common.Name(Language.Language.getLanguage(), value);
                 var names: Array<common.Name> = [name];
                 itm.setNames(names);
                 return itm;
             }
         }
         var itm: structure.CodeType = new structure.CodeType();
-        var name: common.Name = new common.Name(sdmx.SdmxIO.getLocale(), value);
+        var name: common.Name = new common.Name(Language.Language.getLanguage(), value);
         var names: Array<common.Name> = [name];
         itm.setNames(names);
         return itm;
@@ -1804,3 +1805,28 @@ export class CubeObs {
     }
 }
 
+export default {
+    AbstractKey: AbstractKey,
+    AttachmentLevel: AttachmentLevel,
+    Cube:Cube,
+    CubeAttribute:CubeAttribute,
+    CubeDimension:CubeDimension,
+    CubeObs:CubeObs,
+    CubeObservation:CubeObservation,
+    FlatColumnMapper:FlatColumnMapper,
+    FlatDataSet:FlatDataSet,
+    FlatDataSetWriter:FlatDataSetWriter,
+    FlatObs:FlatObs,
+    FullKey:FullKey,
+    Group:Group,
+    ListCubeDimension:ListCubeDimension,
+    PartialKey:PartialKey,
+    Query:Query,
+    QueryKey:QueryKey,
+    RootCubeDimension:RootCubeDimension,
+    StructuredDataMessage:StructuredDataMessage,
+    StructuredDataSet:StructuredDataSet,
+    StructuredValue:StructuredValue,
+    TimeCubeDimension:TimeCubeDimension,
+    ValueTypeResolver:ValueTypeResolver
+}

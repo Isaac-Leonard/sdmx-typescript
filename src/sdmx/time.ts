@@ -905,3 +905,11 @@ export class Month extends AbstractRegularTimePeriod {
     }
 
 }
+export default {
+    AbstractRegularTimePeriod: AbstractRegularTimePeriod,
+    Month:Month,
+    MonthConstants:MonthConstants,
+    TimeUtil:TimeUtil,
+    Year:Year,
+    
+}

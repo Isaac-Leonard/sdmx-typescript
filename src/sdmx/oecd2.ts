@@ -15,7 +15,8 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -23,8 +24,8 @@ import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
 import * as time from './time';
+import * as parser from '../sdmx/parser';
 export class OECD implements interfaces.Queryable, interfaces.RemoteRegistry {
     private agency: string = "OECD";
     //http://stats.oecd.org/restsdmx/sdmx.ashx/GetDataStructure/ALL/OECD
@@ -115,7 +116,7 @@ export class OECD implements interfaces.Queryable, interfaces.RemoteRegistry {
         opts.method = "GET";
         opts.headers = { "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
-            return sdmx.SdmxIO.parseStructure(a);
+            return parser.SdmxParser.parseStructure(a);
         });
     }
     public retrieveData(dataflow: structure.Dataflow,urlString: string): Promise<message.DataMessage> {
@@ -132,7 +133,7 @@ export class OECD implements interfaces.Queryable, interfaces.RemoteRegistry {
         opts.headers = { "Origin": document.location};
         return this.makeRequest(opts).then(function(a) {
             console.log("Got Data Response");
-            var dm = sdmx.SdmxIO.parseData(a);
+            var dm = parser.SdmxParser.parseData(a);
             var payload = new common.PayloadStructureType();
             payload.setStructure(dataflow.getStructure());
             dm.getHeader().setStructures([payload]);
@@ -228,3 +229,4 @@ export class OECD implements interfaces.Queryable, interfaces.RemoteRegistry {
     }
     save(): any { }
 }
+export default { OECD:OECD }

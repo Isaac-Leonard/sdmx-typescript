@@ -1,6 +1,6 @@
 {
   "name": "sdmx-typescript",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "SDMX Parser in Typescript",
   "author": "James Gardner <jsg@internode.on.net>",
   "license": "MIT",
@@ -41,12 +41,13 @@
   ],
   "dependencies": {
     "@types/node": "^13.11.0",
-    "bluebird": "^3.7.2",
     "moment": "^2.24.0",
     "tslib": "^1.11.1",
-    "typescript-collections": "^1.3.3"
+    "typescript-collections": "^1.3.3",
+    "underscore": "^1.10.2"
   },
   "devDependencies": {
+    "@types/bluebird-global": "^3.5.12",
     "@types/jest": "^25.2.1",
     "dts-bundle": "^0.7.3",
     "jest": "^25.2.7",

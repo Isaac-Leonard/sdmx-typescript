@@ -17,7 +17,8 @@
 */
 import * as collections from 'typescript-collections';
 import moment from "moment";
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -28,6 +29,7 @@ import * as data from '../sdmx/data';
 import * as sdmx from '../sdmx';
 import * as time from '../sdmx/time';
 import * as xml from '../sdmx/xml';
+import * as Language from "../sdmx/language";
 
 export function parseXml(s: string): any {
     var parseXml: DOMParser;
@@ -611,7 +613,7 @@ export class Sdmx21StructureReaderTools {
         var lang = node.getAttribute("xml:lang");
         var text = node.childNodes[0].nodeValue;
         var name: common.Name = new common.Name(lang, text);
-        sdmx.SdmxIO.registerLanguage(lang);
+        Language.Language.registerLanguage(lang);
         return name;
     }
     toDescriptions(node: any): Array<common.Description> {
@@ -630,14 +632,14 @@ export class Sdmx21StructureReaderTools {
         }
         var text = node.childNodes[0].nodeValue;
         var desc: common.Description = new common.Description(lang, text);
-        sdmx.SdmxIO.registerLanguage(lang);
+        Language.Language.registerLanguage(lang);
         return desc;
     }
     toTextType(node: any): common.TextType {
         var lang = node.getAttribute("xml:lang");
         var text = node.childNodes[0].nodeValue;
         var textType: common.TextType = new common.TextType(lang, text);
-        sdmx.SdmxIO.registerLanguage(lang);
+        Language.Language.registerLanguage(lang);
         return textType;
     }
     toPartyType(node: any): message.PartyType {

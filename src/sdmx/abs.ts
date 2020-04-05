@@ -15,7 +15,8 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -23,7 +24,8 @@ import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
+import * as parser from '../sdmx/parser';
+
 import moment from "moment";
 export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     private agency: string = "ABS";
@@ -65,12 +67,12 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         return this.makeRequest(opts,send).then(function (a) {
 
             console.log("Got Data Response");
-            var dm = sdmx.SdmxIO.parseData(a);
+            var dm = parser.SdmxParser.parseData(a);
             if(dm==null) {
                 var dm = new message.DataMessage();
                 var payload = new common.PayloadStructureType();
                 payload.setStructure(dataflow.getStructure());
-                dm.setHeader(sdmx.SdmxIO.getBaseHeader());
+                dm.setHeader(parser.SdmxParser.getBaseHeader());
                 dm.getHeader().setStructures([payload]);
                 dm.setDataSet(0,new data.FlatDataSet());
                 return dm;
@@ -137,7 +139,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         opts.url = urlString;
         opts.method = "POST";
         return this.makeRequest(opts, send).then(function (a) {
-            return sdmx.SdmxIO.parseStructure(a);
+            return parser.SdmxParser.parseStructure(a);
         });
     }
     public retrieve2(urlString: string): Promise<string> {
@@ -310,3 +312,4 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         return s;
     }
 }
+export default {ABS:ABS}

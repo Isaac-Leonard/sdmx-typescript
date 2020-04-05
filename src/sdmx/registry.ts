@@ -240,3 +240,8 @@ export class DoubleRegistry implements interfaces.LocalRegistry {
     }
     save(): any { }
 }
+
+export default {
+    DoubleRegistry:DoubleRegistry,
+    LocalRegistry:LocalRegistry,
+}

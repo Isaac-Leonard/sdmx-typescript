@@ -16,7 +16,8 @@
     Copyright (C) 2016 James Gardner
 */
 import moment from "moment";
-import {Promise} from 'bluebird';
+//import { Promise } from 'bluebird';
+import * as _ from 'underscore';
 import * as interfaces from '../sdmx/interfaces';
 import * as registry from '../sdmx/registry';
 import * as structure from '../sdmx/structure';
@@ -24,10 +25,12 @@ import * as message from '../sdmx/message';
 import * as commonreferences from '../sdmx/commonreferences';
 import * as common from '../sdmx/common';
 import * as data from '../sdmx/data';
-import * as sdmx from '../sdmx';
+import * as config from "../sdmx/config";
+//import * as sdmx from '../sdmx';
 import * as time from '../sdmx/time';
 import * as xml from '../sdmx/xml';
 import * as collections from 'typescript-collections';
+import * as Language from "../sdmx/language";
 export class IdentifiableType extends common.AnnotableType {
     private id: commonreferences.ID;
     private urn: xml.anyURI;
@@ -138,20 +141,20 @@ export class NameableType extends IdentifiableType {
     }
 
     public toString(): string {
-        var loc: string = sdmx.SdmxIO.getLanguage();
+        var loc: string = Language.Language.getLanguage();
         var name: common.Name = this.findName(loc);
         if (name != null) {
-            return sdmx.SdmxIO.truncateName(name.toString());
+            return config.SdmxConfig.truncateName(name.toString());
         }
         var desc: common.Description = this.findDescription(loc);
         if (desc != null) {
-            return sdmx.SdmxIO.truncateName(desc.getText());
+            return config.SdmxConfig.truncateName(desc.getText());
         }
         return "NameableType";
     }
 
     public getName(): string {
-        if (sdmx.SdmxIO.isSanitiseNames()) {
+        if (config.SdmxConfig.isSanitiseNames()) {
             return NameableType.sanitise(NameableType.toString(this));
         } else {
             return NameableType.toString(this);
@@ -159,7 +162,7 @@ export class NameableType extends IdentifiableType {
     }
 
     public static toString(named: NameableType): string {
-        var loc: string = sdmx.SdmxIO.getLanguage();
+        var loc: string = Language.Language.getLanguage();
         if (named == null) {
             //console.log("Named is null");
             return "";
@@ -174,9 +177,9 @@ export class NameableType extends IdentifiableType {
             if (name == null) {
                 return named.getId().toString();
             }
-            return sdmx.SdmxIO.truncateName(name.getText());
+            return config.SdmxConfig.truncateName(name.getText());
         }
-        return sdmx.SdmxIO.truncateName(desc.getText());
+        return config.SdmxConfig.truncateName(desc.getText());
     }
 
     public static toStringWithLocale(named: NameableType, loc: string): string {
@@ -193,9 +196,9 @@ export class NameableType extends IdentifiableType {
             if (desc == null) {
                 return named.getId().toString();
             }
-            return sdmx.SdmxIO.truncateName(desc.getText());
+            return config.SdmxConfig.truncateName(desc.getText());
         }
-        return sdmx.SdmxIO.truncateName(name.getText());
+        return config.SdmxConfig.truncateName(name.getText());
 
     }
 
@@ -1376,3 +1379,36 @@ export class RepresentationType {
     }
 }
 
+export default {
+    Attribute:Attribute,
+    AttributeList:AttributeList,
+    BasicComponentTextFormatType: BasicComponentTextFormatType,
+    CodeLists:CodeLists,
+    CodeType:CodeType,
+    CodededTextFormatType:CodededTextFormatType,
+    Codelist:Codelist,
+    Component:Component,
+    ComponentUtil:ComponentUtil,
+    ConceptSchemeType:ConceptSchemeType,
+    ConceptType:ConceptType,
+    Concepts:Concepts,
+    DataStructure:DataStructure,
+    DataStructureComponents:DataStructureComponents,
+    DataStructures:DataStructures,
+    Dataflow:Dataflow,
+    DataflowList:DataflowList,
+    Dimension:Dimension,
+    DimensionList:DimensionList,
+    IdentifiableType:IdentifiableType,
+    ItemSchemeType:ItemSchemeType,
+    ItemType:ItemType,
+    MaintainableType:MaintainableType,
+    PrimaryMeasure:PrimaryMeasure,
+    RepresentationType:RepresentationType,
+    SimpleComponentTextFormatType:SimpleComponentTextFormatType,
+    StructureUsageType:StructureUsageType,
+    Structures:Structures,
+    TextFormatType:TextFormatType,
+    TimeDimension:TimeDimension,
+    VersionableType:VersionableType
+    }
