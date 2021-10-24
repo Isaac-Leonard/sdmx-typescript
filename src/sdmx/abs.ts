@@ -27,6 +27,9 @@ import * as data from '../sdmx/data';
 import * as parser from '../sdmx/parser';
 
 import moment from 'moment';
+
+type RequestOptions = { method?: string; url?: string; headers?: Record<string, string> };
+
 export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   private agency: string = 'ABS';
   private serviceURL: string = 'https://stat.data.abs.gov.au/sdmxws/sdmx.asmx';
@@ -70,7 +73,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     dataflow: structure.Dataflow,
     urlString: string,
     send: string,
-    opts: { method?: string; url?: string; headers?: Record<string, string> } = {},
+    opts: RequestOptions = {},
   ): Promise<message.DataMessage> {
     console.log('abs retrieveData:' + urlString);
     opts.url ??= urlString;
@@ -112,10 +115,8 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   unload(struct: message.StructureType) {
     this.local.unload(struct);
   }
-  private makeRequest(
-    opts: { method?: string; url?: string; headers: Record<string, string> },
-    send: string,
-  ): Promise<string> {
+  private makeRequest(opts: RequestOptions, send: string): Promise<string> {
+    opts.headers ??= {};
     return new Promise<string>(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open(opts.method, opts.url);
@@ -143,14 +144,12 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
       xhr.send(send);
     });
   }
-  public retrieve(urlString: string, send: string, opts): Promise<message.StructureType> {
+  public async retrieve(urlString: string, send: string, opts: RequestOptions): Promise<message.StructureType> {
     console.log('nomis retrieve:' + urlString);
-    var s: string = this.options;
     opts.url = urlString;
     opts.method = 'POST';
-    return this.makeRequest(opts, send).then(function (a) {
-      return parser.SdmxParser.parseStructure(a);
-    });
+    const a = await this.makeRequest(opts, send);
+    return parser.SdmxParser.parseStructure(a);
   }
   public retrieve2(urlString: string): Promise<string> {
     console.log('nomis retrieve:' + urlString);
@@ -387,4 +386,3 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     return s;
   }
 }
-export default { ABS: ABS };
