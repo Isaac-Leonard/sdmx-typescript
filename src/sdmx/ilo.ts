@@ -104,7 +104,7 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
   unload(struct: message.StructureType) {
     this.local.unload(struct);
   }
-  makeRequest(opts): Promise<string> {
+  makeRequest(opts: interfaces.RequestOptions): Promise<string> {
     return new Promise<string>(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open(opts.method, opts.url);
@@ -129,17 +129,7 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
           xhr.setRequestHeader(key, opts.headers[key]);
         });
       }
-      var params = opts.params;
-      // We'll need to stringify if we've been given an object
-      // If we have a string, this is skipped.
-      if (params && typeof params === 'object') {
-        params = Object.keys(params)
-          .map(function (key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-          })
-          .join('&');
-      }
-      xhr.send(params);
+      xhr.send(opts.params);
     });
   }
   public async retrieve(urlString: string): Promise<message.StructureType> {
