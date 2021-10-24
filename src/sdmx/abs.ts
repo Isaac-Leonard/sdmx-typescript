@@ -15,37 +15,33 @@
     along with sdmx-js.  If not, see <http://www.gnu.org/licenses/>.
     Copyright (C) 2016 James Gardner
 */
-//import { Promise } from 'bluebird';
-
-import * as interfaces from '../sdmx/interfaces';
-import * as registry from '../sdmx/registry';
-import * as structure from '../sdmx/structure';
-import * as message from '../sdmx/message';
-import * as commonreferences from '../sdmx/commonreferences';
-import * as common from '../sdmx/common';
-import * as data from '../sdmx/data';
-import * as parser from '../sdmx/parser';
 
 import moment from 'moment';
+import * as common from '../sdmx/common';
+import * as commonreferences from '../sdmx/commonreferences';
+import * as data from '../sdmx/data';
+import { LocalRegistry, Queryable, RemoteRegistry, Repository, RequestOptions } from '../sdmx/interfaces';
+import * as message from '../sdmx/message';
+import * as parser from '../sdmx/parser';
+import * as registry from '../sdmx/registry';
+import * as structure from '../sdmx/structure';
 
-type RequestOptions = { method?: string; url?: string; headers?: Record<string, string> };
-
-export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
+export class ABS implements Queryable, RemoteRegistry {
   private agency: string = 'ABS';
   private serviceURL: string = 'https://stat.data.abs.gov.au/sdmxws/sdmx.asmx';
   private options: string = 'https://stats.oecd.org/OECDStatWS/SDMX/';
-  private local: interfaces.LocalRegistry = new registry.LocalRegistry();
+  private local: LocalRegistry = new registry.LocalRegistry();
   private mediaType: string = 'text/xml; charset=utf-8';
   private dataflowList: Array<structure.Dataflow> = null;
 
   getDataService(): string {
     return 'ABS';
   }
-  getRemoteRegistry(): interfaces.RemoteRegistry {
+  getRemoteRegistry(): RemoteRegistry {
     return this;
   }
 
-  getRepository(): interfaces.Repository {
+  getRepository(): Repository {
     return this;
   }
 
@@ -248,7 +244,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   searchConceptScheme(ref: commonreferences.Reference): Promise<Array<structure.ConceptSchemeType>> {
     return null;
   }
-  getLocalRegistry(): interfaces.LocalRegistry {
+  getLocalRegistry(): LocalRegistry {
     return this.local;
   }
   save(): any {}
