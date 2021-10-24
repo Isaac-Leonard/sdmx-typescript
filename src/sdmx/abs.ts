@@ -61,20 +61,21 @@ export class ABS implements Queryable, RemoteRegistry {
       // No Time Dimension
       this.toGetDataQuery(q, this.options);
     }
-    return this.retrieveData(q.getDataflow(), this.serviceURL, this.toGetDataQuery(q, this.options), {
+    return this.retrieveData(q.getDataflow(), this.serviceURL, {
       headers: { 'Content-Type': this.mediaType, SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
+      params: this.toGetDataQuery(q, this.options),
     });
   }
   public async retrieveData(
     dataflow: structure.Dataflow,
     urlString: string,
-    send: string,
     opts: RequestOptions = {},
   ): Promise<message.DataMessage> {
     console.log('abs retrieveData:' + urlString);
     opts.url ??= urlString;
     opts.method ??= 'POST';
-    const a = await this.makeRequest({ ...opts, headers: opts.headers ?? {} }, send);
+    opts.headers ??= {};
+    const a = await this.makeRequest(opts);
     console.log('Got Data Response');
     var dm = parser.SdmxParser.parseData(a);
     if (dm == null) {
@@ -111,7 +112,7 @@ export class ABS implements Queryable, RemoteRegistry {
   unload(struct: message.StructureType) {
     this.local.unload(struct);
   }
-  private makeRequest(opts: RequestOptions, send: string): Promise<string> {
+  private makeRequest(opts: RequestOptions): Promise<string> {
     opts.headers ??= {};
     return new Promise<string>(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
@@ -137,14 +138,14 @@ export class ABS implements Queryable, RemoteRegistry {
           xhr.setRequestHeader(key, opts.headers[key]);
         });
       }
-      xhr.send(send);
+      xhr.send(opts.params);
     });
   }
-  public async retrieve(urlString: string, send: string, opts: RequestOptions): Promise<message.StructureType> {
+  public async retrieve(urlString: string, opts: RequestOptions): Promise<message.StructureType> {
     console.log('nomis retrieve:' + urlString);
     opts.url = urlString;
     opts.method = 'POST';
-    const a = await this.makeRequest(opts, send);
+    const a = await this.makeRequest(opts);
     return parser.SdmxParser.parseStructure(a);
   }
   public async retrieve2(urlString: string): Promise<string> {
@@ -159,7 +160,7 @@ export class ABS implements Queryable, RemoteRegistry {
     opts.url = urlString;
     opts.method = 'GET';
     opts.headers = { Origin: document.location };
-    return this.makeRequest(opts, '');
+    return this.makeRequest(opts);
   }
 
   public async findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
@@ -170,20 +171,17 @@ export class ABS implements Queryable, RemoteRegistry {
       console.log(dst);
       return dst;
     } else {
-      const structure = await this.retrieve(
-        this.serviceURL,
-        this.toGetDataStructureQuery(
+      const structure = await this.retrieve(this.serviceURL, {
+        headers: {
+          'Content-Type': this.mediaType,
+          SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
+        },
+        params: this.toGetDataStructureQuery(
           ref.getMaintainableParentId().toString(),
           ref.getAgencyId().toString(),
           this.options,
         ),
-        {
-          headers: {
-            'Content-Type': this.mediaType,
-            SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
-          },
-        },
-      );
+      });
       this.local.load(structure);
       return structure.getStructures().findDataStructure(ref);
     }
@@ -193,11 +191,12 @@ export class ABS implements Queryable, RemoteRegistry {
     if (this.dataflowList != null) {
       return this.dataflowList;
     } else {
-      const st = await this.retrieve(this.serviceURL, this.toGetDataStructureListQuery11(this.agency, this.options), {
+      const st = await this.retrieve(this.serviceURL, {
         headers: {
           'Content-Type': this.mediaType,
           SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
         },
+        params: this.toGetDataStructureListQuery11(this.agency, this.options),
       });
       var array = st.getStructures().getDataStructures().getDataStructures();
 
