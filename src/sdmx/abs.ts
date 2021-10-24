@@ -70,10 +70,15 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
       headers: { 'Content-Type': this.mediaType, SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
     });
   }
-  public async retrieveData(dataflow: structure.Dataflow, urlString: string, send, opts): Promise<message.DataMessage> {
+  public async retrieveData(
+    dataflow: structure.Dataflow,
+    urlString: string,
+    send: string,
+    opts: { method?: string; url?: string } = {},
+  ): Promise<message.DataMessage> {
     console.log('abs retrieveData:' + urlString);
-    opts.url = urlString;
-    opts.method = 'POST';
+    opts.url ??= urlString;
+    opts.method ??= 'POST';
     const a = await this.makeRequest(opts, send);
     console.log('Got Data Response');
     var dm = parser.SdmxParser.parseData(a);
@@ -111,7 +116,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   unload(struct: message.StructureType) {
     this.local.unload(struct);
   }
-  makeRequest(opts, send: string): Promise<string> {
+  makeRequest(opts: { method?: string; url?: string }, send: string): Promise<string> {
     return new Promise<string>(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open(opts.method, opts.url);
@@ -135,16 +140,6 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         Object.keys(opts.headers).forEach(function (key) {
           xhr.setRequestHeader(key, opts.headers[key]);
         });
-      }
-      var params = opts.params;
-      // We'll need to stringify if we've been given an object
-      // If we have a string, this is skipped.
-      if (params && typeof params === 'object') {
-        params = Object.keys(params)
-          .map(function (key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-          })
-          .join('&');
       }
       xhr.send(send);
     });
