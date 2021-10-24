@@ -162,4 +162,5 @@ export interface RequestOptions {
   method?: string;
   url?: string;
   headers?: Record<string, string>;
+  params?: string | Record<string, any>;
 }
