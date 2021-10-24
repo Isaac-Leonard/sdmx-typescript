@@ -201,85 +201,54 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
     }
   }
 
-  public listDataflows(): Promise<any> {
+  public async listDataflows(): Promise<structure.Dataflow[]> {
     if (this.dataflowList != null) {
-      var promise = new Promise<Array<structure.Dataflow>>(
-        function (resolve, reject) {
-          resolve(this.dataflowList);
-        }.bind(this),
-      );
-      return promise;
+      return this.dataflowList;
     } else {
-      var r: commonreferences.Ref = new commonreferences.Ref();
+      const r: commonreferences.Ref = new commonreferences.Ref();
       r.setAgencyId(new commonreferences.NestedNCNameID(this.agency));
       r.setMaintainableParentId(new commonreferences.ID('CL_COLLECTION'));
       r.setVersion(null);
-      var ref: commonreferences.Reference = new commonreferences.Reference(r, null);
-      var prom = this.findCodelist(ref);
-      var dataflowList: Array<structure.Dataflow> = [];
-      var indicatorsCodelist = [];
-      return prom
-        .then(
-          function (classifications: any) {
-            this.classifications = classifications;
-            var indicatorsArray = [];
-            for (var i: number = 0; i < classifications.size(); i++) {
-              var code: structure.CodeType = <structure.CodeType>classifications.getItem(i);
-              var cod: string = code.getId().toString();
-              var r2: commonreferences.Ref = new commonreferences.Ref();
-              r2.setAgencyId(new commonreferences.NestedNCNameID(this.agency));
-              r2.setMaintainableParentId(new commonreferences.ID('CL_INDICATOR_' + cod));
-              r2.setVersion(null);
-              var ref: commonreferences.Reference = new commonreferences.Reference(r2, null);
-              indicatorsArray.push(ref);
-            }
-            return indicatorsArray;
-          }.bind(this),
-        )
-        .map(
-          function (item, idex, length) {
-            return this.findCodelist(item);
-          }.bind(this),
-        )
-        .then(
-          function (indicatorArray: any) {
-            this.indicatorsArrayCodelist = indicatorArray;
-            console.log(JSON.stringify(indicatorArray));
-            var indic: structure.Codelist = null;
-            var dataflowList: Array<structure.Dataflow> = [];
-            for (var i: number = 0; i < this.classifications.size(); i++) {
-              var col1 = this.classifications.getItem(i);
-              var con = col1.getId().toString();
-              indic = this.indicatorsArrayCodelist[i];
-              for (var k = 0; k < indic.size(); k++) {
-                var dataflow = new structure.Dataflow();
-                dataflow.setAgencyId(this.classifications.getAgencyId());
-                var indicid: string = indic.getItem(k).getId().toString();
-                dataflow.setId(new commonreferences.ID('DF_' + con + '_ALL_' + indicid));
-                dataflow.setVersion(null);
-                var r3: commonreferences.Ref = new commonreferences.Ref();
-                r3.setAgencyId(this.classifications.getAgencyId());
-                r3.setMaintainableParentId(new commonreferences.ID(con + '_ALL_' + indicid));
-                r3.setVersion(null);
-                var names: Array<common.Name> = [];
-                var langs = ['en', 'fr', 'es'];
-                for (var lang: number = 0; lang < langs.length; lang++) {
-                  var name: common.Name = new common.Name(
-                    langs[lang],
-                    col1.findName(langs[lang]).getText() + ' - ' + indic.getItem(k).findName(langs[lang]).getText(),
-                  );
-                  names.push(name);
-                }
-                dataflow.setNames(names);
-                var reference: commonreferences.Reference = new commonreferences.Reference(r3, null);
-                dataflow.setStructure(reference);
-                dataflowList.push(dataflow);
-              }
-            }
-            this.dataflowList = dataflowList;
-            return this.dataflowList;
-          }.bind(this),
-        );
+      const ref: commonreferences.Reference = new commonreferences.Reference(r, null);
+      this.classifications = await this.findCodelist(ref);
+      var indicatorsArray = this.classifications.getItems().map((code) => {
+        var cod: string = code.getId().toString();
+        var r2: commonreferences.Ref = new commonreferences.Ref();
+        r2.setAgencyId(new commonreferences.NestedNCNameID(this.agency));
+        r2.setMaintainableParentId(new commonreferences.ID('CL_INDICATOR_' + cod));
+        r2.setVersion(null);
+        return new commonreferences.Reference(r2, null);
+      });
+
+      this.indicatorsArrayCodelist = await Promise.all(indicatorsArray.map((item) => this.findCodelist(item)));
+      console.log(JSON.stringify(indicatorsArray));
+      this.dataflowList = this.classifications
+        .getItems()
+        .map((col1, i) => {
+          var con = col1.getId().toString();
+          const indicator = this.indicatorsArrayCodelist[i];
+          return indicator.getItems().map((indic) => {
+            const dataflow = new structure.Dataflow();
+            dataflow.setAgencyId(this.classifications.getAgencyId());
+            const indicid = indic.getId().toString();
+            dataflow.setId(new commonreferences.ID('DF_' + con + '_ALL_' + indicid));
+            dataflow.setVersion(null);
+            const r3: commonreferences.Ref = new commonreferences.Ref();
+            r3.setAgencyId(this.classifications.getAgencyId());
+            r3.setMaintainableParentId(new commonreferences.ID(con + '_ALL_' + indicid));
+            r3.setVersion(null);
+            const langs = ['en', 'fr', 'es'];
+            const names = langs.map(
+              (lang) => new common.Name(lang, `${col1.findName(lang).getText()} - ${indic.findName(lang).getText()}`),
+            );
+            dataflow.setNames(names);
+            const reference: commonreferences.Reference = new commonreferences.Reference(r3, null);
+            dataflow.setStructure(reference);
+            return dataflow;
+          });
+        })
+        .flat();
+      return this.dataflowList;
     }
   }
   public getServiceURL(): string {
