@@ -157,3 +157,9 @@ export interface DataSet {
   groupSize(): number;
   find(key: data.FullKey): data.FlatObs;
 }
+
+export interface RequestOptions {
+  method?: string;
+  url?: string;
+  headers?: Record<string, string>;
+}
