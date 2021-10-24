@@ -63,7 +63,7 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
       q.getEndDate().getFullYear();
     return this.retrieveData(q.getDataflow(), url);
   }
-  public retrieveData(dataflow: structure.Dataflow, urlString: string): Promise<message.DataMessage> {
+  public async retrieveData(dataflow: structure.Dataflow, urlString: string): Promise<message.DataMessage> {
     console.log('ilo retrieveData:' + urlString);
     var s: string = this.options;
     if (urlString.indexOf('?') == -1) {
@@ -142,7 +142,7 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
       xhr.send(params);
     });
   }
-  public retrieve(urlString: string): Promise<message.StructureType> {
+  public async retrieve(urlString: string): Promise<message.StructureType> {
     console.log('nomis retrieve:' + urlString);
     var s: string = this.options;
     if (urlString.indexOf('?') == -1) {
@@ -158,7 +158,7 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
       return parser.SdmxParser.parseStructure(a);
     });
   }
-  public retrieve2(urlString: string): Promise<string> {
+  public async retrieve2(urlString: string): Promise<string> {
     console.log('nomis retrieve:' + urlString);
     var s: string = this.options;
     if (urlString.indexOf('?') == -1) {
@@ -175,15 +175,10 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
     });
   }
 
-  public findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
+  public async findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
     var dst: structure.DataStructure = this.local.findDataStructure(ref);
     if (dst != null) {
-      var promise = new Promise<structure.DataStructure>(
-        function (resolve, reject) {
-          resolve(dst);
-        }.bind(this),
-      );
-      return promise;
+      return dst;
     } else {
       return <Promise<structure.DataStructure>>this.retrieve(
         this.getServiceURL() +
@@ -260,15 +255,10 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
   findCode(ref: commonreferences.Reference): Promise<structure.CodeType> {
     return null;
   }
-  findCodelist(ref: commonreferences.Reference): Promise<structure.Codelist> {
+  async findCodelist(ref: commonreferences.Reference): Promise<structure.Codelist> {
     var dst: structure.Codelist = this.local.findCodelist(ref);
     if (dst != null) {
-      var promise = new Promise<structure.Codelist>(
-        function (resolve, reject) {
-          resolve(dst);
-        }.bind(this),
-      );
-      return promise;
+      return dst;
     } else {
       return <Promise<structure.Codelist>>this.retrieve(
         this.getServiceURL() +
@@ -292,15 +282,10 @@ export class ILO implements interfaces.Queryable, interfaces.RemoteRegistry, int
   findConcept(ref: commonreferences.Reference): Promise<structure.ConceptType> {
     return null;
   }
-  findConceptScheme(ref: commonreferences.Reference): Promise<structure.ConceptSchemeType> {
+  async findConceptScheme(ref: commonreferences.Reference): Promise<structure.ConceptSchemeType> {
     var dst: structure.ConceptSchemeType = this.local.findConceptScheme(ref);
     if (dst != null) {
-      var promise = new Promise<structure.ConceptSchemeType>(
-        function (resolve, reject) {
-          resolve(dst);
-        }.bind(this),
-      );
-      return promise;
+      return dst;
     } else {
       return <Promise<structure.ConceptSchemeType>>this.retrieve(
         this.getServiceURL() +
