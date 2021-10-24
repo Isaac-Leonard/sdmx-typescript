@@ -70,27 +70,26 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
       headers: { 'Content-Type': this.mediaType, SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
     });
   }
-  public retrieveData(dataflow: structure.Dataflow, urlString: string, send, opts): Promise<message.DataMessage> {
+  public async retrieveData(dataflow: structure.Dataflow, urlString: string, send, opts): Promise<message.DataMessage> {
     console.log('abs retrieveData:' + urlString);
     opts.url = urlString;
     opts.method = 'POST';
-    return this.makeRequest(opts, send).then(function (a) {
-      console.log('Got Data Response');
-      var dm = parser.SdmxParser.parseData(a);
-      if (dm == null) {
-        var dm = new message.DataMessage();
-        var payload = new common.PayloadStructureType();
-        payload.setStructure(dataflow.getStructure());
-        dm.setHeader(parser.SdmxParser.getBaseHeader());
-        dm.getHeader().setStructures([payload]);
-        dm.setDataSet(0, new data.FlatDataSet());
-        return dm;
-      }
+    const a = await this.makeRequest(opts, send);
+    console.log('Got Data Response');
+    var dm = parser.SdmxParser.parseData(a);
+    if (dm == null) {
+      var dm = new message.DataMessage();
       var payload = new common.PayloadStructureType();
       payload.setStructure(dataflow.getStructure());
+      dm.setHeader(parser.SdmxParser.getBaseHeader());
       dm.getHeader().setStructures([payload]);
+      dm.setDataSet(0, new data.FlatDataSet());
       return dm;
-    });
+    }
+    var payload = new common.PayloadStructureType();
+    payload.setStructure(dataflow.getStructure());
+    dm.getHeader().setStructures([payload]);
+    return dm;
   }
   constructor(agency?: string, service?: string, options?: string) {
     if (service != null) {
@@ -211,14 +210,9 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     }
   }
 
-  public listDataflows(): Promise<Array<structure.Dataflow>> {
+  public async listDataflows(): Promise<Array<structure.Dataflow>> {
     if (this.dataflowList != null) {
-      var promise = new Promise<Array<structure.Dataflow>>(
-        function (resolve, reject) {
-          resolve(this.dataflowList);
-        }.bind(this),
-      );
-      return promise;
+      return this.dataflowList;
     } else {
       return <Promise<Array<structure.Dataflow>>>this.retrieve(
         this.serviceURL,
