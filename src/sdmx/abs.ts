@@ -50,8 +50,6 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     this.local.clear();
   }
   query(q: data.Query): Promise<message.DataMessage> {
-    var url = '';
-    var data = null;
     if (
       this.getLocalRegistry()
         .findDataStructure(q.getDataflow().getStructure())
@@ -59,12 +57,10 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         .getDimensionList()
         .getTimeDimension() != null
     ) {
-      url = this.serviceURL;
-      data = this.toGetDataQuery(q, this.options);
+      this.toGetDataQuery(q, this.options);
     } else {
       // No Time Dimension
-      url = this.serviceURL;
-      data = this.toGetDataQuery(q, this.options);
+      this.toGetDataQuery(q, this.options);
     }
     return this.retrieveData(q.getDataflow(), this.serviceURL, this.toGetDataQuery(q, this.options), {
       headers: { 'Content-Type': this.mediaType, SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
