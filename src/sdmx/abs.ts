@@ -151,7 +151,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     const a = await this.makeRequest(opts, send);
     return parser.SdmxParser.parseStructure(a);
   }
-  public retrieve2(urlString: string): Promise<string> {
+  public async retrieve2(urlString: string): Promise<string> {
     console.log('nomis retrieve:' + urlString);
     var s: string = this.options;
     if (urlString.indexOf('?') == -1) {
@@ -163,25 +163,18 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     opts.url = urlString;
     opts.method = 'GET';
     opts.headers = { Origin: document.location };
-    return this.makeRequest(opts, '').then(function (a) {
-      return a;
-    });
+    return this.makeRequest(opts, '');
   }
 
-  public findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
+  public async findDataStructure(ref: commonreferences.Reference): Promise<structure.DataStructure> {
     console.log('findDataStructure');
     var dst: structure.DataStructure = this.local.findDataStructure(ref);
     if (dst != null) {
       console.log('DST');
       console.log(dst);
-      var promise = new Promise<structure.DataStructure>(
-        function (resolve, reject) {
-          resolve(dst);
-        }.bind(this),
-      );
-      return promise;
+      return dst;
     } else {
-      return <Promise<structure.DataStructure>>this.retrieve(
+      const structure = await this.retrieve(
         this.serviceURL,
         this.toGetDataStructureQuery(
           ref.getMaintainableParentId().toString(),
@@ -194,12 +187,9 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
             SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
           },
         },
-      ).then(
-        function (structure) {
-          this.local.load(structure);
-          return structure.getStructures().findDataStructure(ref);
-        }.bind(this),
       );
+      this.local.load(structure);
+      return structure.getStructures().findDataStructure(ref);
     }
   }
 
@@ -207,26 +197,16 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     if (this.dataflowList != null) {
       return this.dataflowList;
     } else {
-      return <Promise<Array<structure.Dataflow>>>this.retrieve(
-        this.serviceURL,
-        this.toGetDataStructureListQuery11(this.agency, this.options),
-        {
-          headers: {
-            'Content-Type': this.mediaType,
-            SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
-          },
+      const st = await this.retrieve(this.serviceURL, this.toGetDataStructureListQuery11(this.agency, this.options), {
+        headers: {
+          'Content-Type': this.mediaType,
+          SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
         },
-      ).then(
-        function (st) {
-          var array: Array<structure.DataStructure> = st.getStructures().getDataStructures().getDataStructures();
-          var dfs: Array<structure.Dataflow> = [];
-          for (var i = 0; i < array.length; i++) {
-            dfs.push(array[i].asDataflow());
-          }
-          this.dataflowList = dfs;
-          return dfs;
-        }.bind(this),
-      );
+      });
+      var array = st.getStructures().getDataStructures().getDataStructures();
+
+      this.dataflowList = array.map((x) => x.asDataflow());
+      return this.dataflowList;
     }
   }
   public getServiceURL(): string {
