@@ -29,8 +29,8 @@ import * as parser from '../sdmx/parser';
 import moment from 'moment';
 export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   private agency: string = 'ABS';
-  private serviceURL: string = 'http://stat.data.abs.gov.au/sdmxws/sdmx.asmx';
-  private options: string = 'http://stats.oecd.org/OECDStatWS/SDMX/';
+  private serviceURL: string = 'https://stat.data.abs.gov.au/sdmxws/sdmx.asmx';
+  private options: string = 'https://stats.oecd.org/OECDStatWS/SDMX/';
   private local: interfaces.LocalRegistry = new registry.LocalRegistry();
   private mediaType: string = 'text/xml; charset=utf-8';
   private dataflowList: Array<structure.Dataflow> = null;
@@ -67,7 +67,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
       data = this.toGetDataQuery(q, this.options);
     }
     return this.retrieveData(q.getDataflow(), this.serviceURL, this.toGetDataQuery(q, this.options), {
-      headers: { 'Content-Type': this.mediaType, SOAPAction: 'http://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
+      headers: { 'Content-Type': this.mediaType, SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetCompactData' },
     });
   }
   public retrieveData(dataflow: structure.Dataflow, urlString: string, send, opts): Promise<message.DataMessage> {
@@ -199,7 +199,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         {
           headers: {
             'Content-Type': this.mediaType,
-            SOAPAction: 'http://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
+            SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
           },
         },
       ).then(
@@ -226,7 +226,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
         {
           headers: {
             'Content-Type': this.mediaType,
-            SOAPAction: 'http://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
+            SOAPAction: 'https://stats.oecd.org/OECDStatWS/SDMX/GetDataStructureDefinition',
           },
         },
       ).then(
@@ -288,15 +288,17 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   public toGetDataStructureListQuery11(providerRef: string, soapNamespace: string): string {
     var s: string = '';
     s +=
-      '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sdmx="' + soapNamespace + '">';
+      '<soapenv:Envelope xmlns:soapenv="https://schemas.xmlsoap.org/soap/envelope/" xmlns:sdmx="' +
+      soapNamespace +
+      '">';
     s += '<soapenv:Header></soapenv:Header>';
     s += '<soapenv:Body>';
     s += '<sdmx:GetDataStructureDefinition>';
     s += '<sdmx:QueryMessage>';
     s +=
-      '<message:QueryMessage xmlns:message="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"><Header xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"><message:ID>none</message:ID><message:Test>false</message:Test><message:Prepared>2016-08-19T00:04:18+08:00</message:Prepared><message:Sender id="Sdmx-Sax" /><message:Receiver id="' +
+      '<message:QueryMessage xmlns:message="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"><Header xmlns="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message"><message:ID>none</message:ID><message:Test>false</message:Test><message:Prepared>2016-08-19T00:04:18+08:00</message:Prepared><message:Sender id="Sdmx-Sax" /><message:Receiver id="' +
       providerRef +
-      '" /></Header><message:Query><query:KeyFamilyWhere xmlns:query="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/query"><query:And /></query:KeyFamilyWhere></message:Query></message:QueryMessage>';
+      '" /></Header><message:Query><query:KeyFamilyWhere xmlns:query="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/query"><query:And /></query:KeyFamilyWhere></message:Query></message:QueryMessage>';
     s += '</sdmx:QueryMessage>';
     s += '</sdmx:GetDataStructureDefinition>';
     s += '</soapenv:Body>';
@@ -307,15 +309,17 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   public toGetDataStructureQuery(keyFamily: string, providerRef: string, soapNamespace: string): string {
     var s: string = '';
     s +=
-      '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:sdmx="' + soapNamespace + '">';
+      '<soapenv:Envelope xmlns:soapenv="https://schemas.xmlsoap.org/soap/envelope/" xmlns:sdmx="' +
+      soapNamespace +
+      '">';
     s += '<soapenv:Header></soapenv:Header>';
     s += '<soapenv:Body>';
     s += '<sdmx:GetDataStructureDefinition>';
     s += '<!--Optional:-->';
     s += '<sdmx:QueryMessage>';
     s +=
-      '<message:QueryMessage xsi:schemaLocation="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/queryhttp://www.sdmx.org/docs/2_0/SDMXQuery.xsd http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message http://www.sdmx.org/docs/2_0/SDMXMessage.xsd" xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/query" xmlns:message="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">';
-    s += '<Header xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
+      '<message:QueryMessage xsi:schemaLocation="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/queryhttps://www.sdmx.org/docs/2_0/SDMXQuery.xsd https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message https://www.sdmx.org/docs/2_0/SDMXMessage.xsd" xmlns="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/query" xmlns:message="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance">';
+    s += '<Header xmlns="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
     s += '<ID>none</ID>';
     s += '<Test>false</Test>';
     s += '<Prepared>2012-06-01T09:33:53</Prepared>';
@@ -347,12 +351,12 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     var startTime = moment(q.getStartDate());
     var endTime = moment(q.getEndDate());
     s +=
-      '<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">';
+      '<soap12:Envelope xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:soap12="https://www.w3.org/2003/05/soap-envelope">';
     s += '<soap12:Body>';
-    s += '<GetCompactData xmlns="http://stats.oecd.org/OECDStatWS/SDMX/">';
+    s += '<GetCompactData xmlns="https://stats.oecd.org/OECDStatWS/SDMX/">';
     s += '<QueryMessage>';
-    s += '<message:QueryMessage xmlns:message="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
-    s += '<Header xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
+    s += '<message:QueryMessage xmlns:message="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
+    s += '<Header xmlns="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/message">';
     s += '<message:ID>none</message:ID>';
     s += '<message:Test>false</message:Test>';
     s += '<message:Prepared>2016-08-19T00:11:33+08:00</message:Prepared>';
@@ -360,7 +364,7 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     s += '<message:Receiver id="' + this.agency + '"/>';
     s += '</Header>';
     s += '<message:Query>';
-    s += '<DataWhere xmlns="http://www.SDMX.org/resources/SDMXML/schemas/v2_0/query">';
+    s += '<DataWhere xmlns="https://www.SDMX.org/resources/SDMXML/schemas/v2_0/query">';
     s += '<And>';
     s += '<DataSet>' + q.getDataflow().getId().toString() + '</DataSet>';
     s += '<Time>';
