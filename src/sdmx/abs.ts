@@ -74,12 +74,12 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
     dataflow: structure.Dataflow,
     urlString: string,
     send: string,
-    opts: { method?: string; url?: string } = {},
+    opts: { method?: string; url?: string; headers?: Record<string, string> } = {},
   ): Promise<message.DataMessage> {
     console.log('abs retrieveData:' + urlString);
     opts.url ??= urlString;
     opts.method ??= 'POST';
-    const a = await this.makeRequest(opts, send);
+    const a = await this.makeRequest({ ...opts, headers: opts.headers ?? {} }, send);
     console.log('Got Data Response');
     var dm = parser.SdmxParser.parseData(a);
     if (dm == null) {
@@ -116,7 +116,10 @@ export class ABS implements interfaces.Queryable, interfaces.RemoteRegistry {
   unload(struct: message.StructureType) {
     this.local.unload(struct);
   }
-  makeRequest(opts: { method?: string; url?: string }, send: string): Promise<string> {
+  private makeRequest(
+    opts: { method?: string; url?: string; headers: Record<string, string> },
+    send: string,
+  ): Promise<string> {
     return new Promise<string>(function (resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open(opts.method, opts.url);
