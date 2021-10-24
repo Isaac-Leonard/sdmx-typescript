@@ -147,7 +147,7 @@ export interface DataSet {
   getColumnIndex(s: string): number;
   getColumnSize(): number;
   size(): number;
-  getValue(row: number, col: number): void;
+  getValue(row: number, col: number): string;
   setValue(row: number, col: number, val: string): void;
   getFlatObs(row: number): data.FlatObs;
   query(cube: data.Cube, order: Array<string>): data.Cube;
@@ -162,5 +162,5 @@ export interface RequestOptions {
   method?: string;
   url?: string;
   headers?: Record<string, string>;
-  params?: string | Record<string, any>;
+  params?: string | URLSearchParams;
 }
